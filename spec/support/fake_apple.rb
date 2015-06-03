@@ -11,3 +11,12 @@ class FakeApple < Sinatra::Base
   end
 
 end
+
+module FakeAppleTestHelper
+
+  def stub_apple
+    allow(Device).to receive(:new_browser_session) { Capybara::Session.new(:rack_test, FakeApple) }
+    allow(Device).to receive(:apple_url){ '/agreementWarrantyDynamic.do' }
+  end
+
+end

@@ -3,9 +3,10 @@ require 'capybara/poltergeist'
 
 class Device
 
-  attr_reader :in_warranty, :warranty_expiration_date
+  attr_reader :imei, :in_warranty, :warranty_expiration_date
 
   def initialize(attrs = {})
+    @imei = attrs[:imei]
     @in_warranty = attrs[:in_warranty]
     @warranty_expiration_date = attrs[:warranty_expiration_date]
   end
@@ -19,20 +20,21 @@ class Device
     end
     if session.has_selector?('#results')
       in_warranty = session.has_selector?('#results #hardware-true')
-      Device.new(in_warranty: in_warranty, warranty_expiration_date: warranty_expiration_date(session))
+      expiration_date = if session.has_selector?('#hardware-text')
+                          warranty_expiration_date(session.find('#hardware-text').text)
+                        end
+      Device.new(imei: imei, in_warranty: in_warranty, warranty_expiration_date: expiration_date)
     end
   end
 
   protected
 
-  def self.warranty_expiration_date(session)
-    if session.has_selector?('#hardware-text')
-      date_match = session.find('#hardware-text').text.match(/Expiration Date: (\w+\s+\d+,\s+\d{4})/)
-      if date_match
-        begin
-          Date.parse(date_match[1])
-        rescue ArgumentError => e
-        end
+  def self.warranty_expiration_date(text)
+    date_match = text.match(/Expiration Date: (\w+\s+\d+,\s+\d{4})/)
+    if date_match
+      begin
+        Date.parse(date_match[1])
+      rescue ArgumentError => e
       end
     end
   end

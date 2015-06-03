@@ -1,0 +1,23 @@
+= render 'form'
+.row
+  .col-md-4.col-md-offset-4
+    - if @device.present?
+      %table.table
+        %tr
+          %td IMEI:
+          %td.text-right= @device.imei
+        %tr
+          - if @device.in_warranty
+            %td.text-right.success{ colspan: 2 }
+              %i.glyphicon.glyphicon-ok
+              = t('in_warranty')
+          - else
+            %td.text-right.warning{ colspan: 2 }
+              %i.glyphicon.glyphicon-exclamation-sign
+              = t('out_of_warranty')
+        - if @device.warranty_expiration_date
+          %tr
+            %td Warranty expiration date:
+            %td.text-right= l @device.warranty_expiration_date, format: :long
+    - else
+      = t('device_not_found', imei: params[:imei])

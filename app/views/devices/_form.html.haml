@@ -1,0 +1,9 @@
+.row
+  .col-md-4.col-md-offset-4
+    .well.well-sm
+      = form_tag search_devices_path, method: :get, class: '' do
+        .form-group
+          = text_field_tag 'imei', nil, class: 'form-control', placeholder: 'IMEI'
+        = button_tag type: :submit, class: 'btn btn-primary btn-block btn-lg', name: nil, data: {disable_with: 'Searching...'} do
+          %i.glyphicon.glyphicon-search
+          Search
